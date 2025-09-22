@@ -1,0 +1,1993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>𝐄𝐗𝐏𝐄𝐑𝐓𝐞𝐚𝐫𝐧</title>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.com/css2?family=Poppins:wght@400;600;700;900&family=Noto+Sans+Bengali:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* New background applied to all pages */
+            background: linear-gradient(160deg, #0f0f1f, #1a1a2e, #000);
+            color: #F5F5F5;
+            background-attachment: fixed;
+            transition: background 0.5s ease, font-family 0.5s ease;
+        }
+        h1, h2, h3 { color: #FFFFFF; }
+        .dark-bg { background-color: #121212; }
+        .card-bg {
+            background-color: rgba(30, 30, 30, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25);
+        }
+        .text-accent-gradient {
+            background: linear-gradient(to right, #FFD700, #D4AF37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .btn, .btn-gradient, .btn-outline-accent {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: scale(1);
+            border: none;
+        }
+        .btn:active, .btn-gradient:active, .btn-outline-accent:active { transform: scale(0.95); }
+        .btn-gradient {
+            background-image: linear-gradient(to right, #D4AF37, #FFD700);
+            color: #121212;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+        }
+        .btn-gradient:hover { box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3); }
+        .btn-outline-accent {
+            background-color: transparent;
+            border: 1px solid #D4AF37;
+            color: #D4AF37;
+        }
+        .btn-outline-accent:hover {
+            background-color: #D4AF37;
+            color: #121212;
+        }
+        .btn-gradient:disabled, .btn-disabled {
+            background-image: none;
+            background-color: #2a2a2a;
+            color: #6a6a6a;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .input-field {
+            background-color: #222;
+            border: 1px solid #444;
+            color: #F5F5F5;
+            transition: all 0.2s ease;
+        }
+        .input-field::placeholder {
+            color: #888;
+        }
+        .input-field:focus {
+            border-color: #D4AF37;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3);
+            outline: none;
+        }
+        .main-page { display: none; }
+        .main-page.active { display: flex; animation: fadeIn 0.5s ease-in-out; }
+        .sub-page { display: none; }
+        .sub-page.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        
+        /* --- START: Premium Bottom Nav Style --- */
+        .bottom-nav {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(18, 18, 18, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+        .nav-link {
+            color: #888;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .nav-link .icon {
+             transition: all 0.3s ease;
+        }
+        .nav-link span {
+            font-size: 11px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .nav-link.active {
+            color: #FFD700;
+        }
+        .nav-link.active .icon {
+            transform: translateY(-2px);
+        }
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            width: 0;
+            height: 3px;
+            background-color: #FFD700;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        .nav-link.active::before {
+            width: 24px;
+        }
+        #home-nav-link {
+            transform: translateY(-20px);
+            background: linear-gradient(135deg, #FFD700, #D4AF37);
+            color: #121212;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: 4px solid #121212;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+        }
+        #home-nav-link .icon {
+            width: 28px;
+            height: 28px;
+        }
+        #home-nav-link span {
+             display: none;
+        }
+        /* --- END: Premium Bottom Nav Style --- */
+
+        .header {
+             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+             background-color: rgba(18, 18, 18, 0.7);
+             backdrop-filter: blur(12px);
+             -webkit-backdrop-filter: blur(12px);
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Welcome Page Styles */
+        #welcome-page {
+            --bg:#050d19;
+            --text:#fff;
+            --grad1:linear-gradient(135deg,#00c6ff,#0072ff);
+            --grad2:linear-gradient(135deg,#f7971e,#ffd200);
+            --grad3:linear-gradient(135deg,#43e97b,#38f9d7);
+            --grad4:linear-gradient(135deg,#f54ea2,#ff7676);
+            background: var(--bg);
+        }
+        .welcome-container .frame{
+            font-family:'Poppins','Noto Sans Bengali',sans-serif;
+            max-width:420px;width:100%;background:rgba(255,255,255,0.02);border-radius:22px;padding:20px;
+            box-shadow:0 20px 60px rgba(0,0,0,0.7);backdrop-filter:blur(10px);
+        }
+        .welcome-container .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+        .welcome-container .stat-card{padding:18px;border-radius:18px;color:#fff;font-weight:700;box-shadow:0 8px 20px rgba(0,0,0,0.5);}
+        .welcome-container .stat-title{font-size:13px;opacity:0.85}
+        .welcome-container .stat-value{font-size:22px;font-weight:900;margin-top:6px;text-shadow:0 2px 6px rgba(0,0,0,0.4)}
+        .welcome-container #card-members{background:var(--grad1)}
+        .welcome-container #card-active{background:var(--grad2)}
+        .welcome-container #card-withdraw{background:var(--grad3)}
+        .welcome-container #card-rating{background:var(--grad4)}
+        .welcome-container .btn{
+            margin-top:22px;display:inline-block;padding:16px 36px;border:none;border-radius:14px;
+            font-size:18px;font-weight:700;color:#fff;cursor:pointer;background:linear-gradient(135deg,#00c6ff,#0072ff);
+            box-shadow:0 8px 25px rgba(0,114,255,0.6);transition:all .3s ease;text-decoration:none;text-align:center;width:100%;
+        }
+        .welcome-container .btn:hover{transform:translateY(-4px) scale(1.03);box-shadow:0 12px 32px rgba(0,114,255,0.8);}
+        .welcome-container .btn:active{transform:scale(.98);}
+
+        /* New Deposit/Withdraw Page Styles */
+        .payment-container {
+            font-family: 'Poppins', sans-serif;
+            background: rgba(30, 30, 30, 0.75);
+            padding: 25px;
+            border-radius: 14px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25);
+        }
+        .payment-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        .payment-method {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+        .payment-method-title {
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #eee;
+        }
+        .number-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .number {
+            background: #222;
+            color: #F5F5F5;
+            padding: 8px 10px;
+            border-radius: 6px;
+            flex: 1;
+            margin-right: 8px;
+            font-family: 'Inter', sans-serif;
+            border: 1px solid #444;
+            word-break: break-all;
+        }
+        .copy-btn {
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+            border: none;
+            color: #121212;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .payment-form {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .payment-form label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ccc;
+        }
+        .payment-form input, .payment-form select {
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .submit-btn {
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+            border: none;
+            color: #121212;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 16px;
+            margin-top: 10px;
+            width: 100%;
+        }
+        .history-item-red {
+            border-left: 4px solid #ef4444; /* red-500 */
+        }
+        .history-item-green {
+            border-left: 4px solid #22c55e; /* green-500 */
+        }
+        /* Added for improved history appearance */
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background-color: rgba(40, 40, 40, 0.7);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .history-item:hover {
+            background-color: rgba(50, 50, 50, 0.8);
+        }
+        .history-item .details {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+        .history-item .details .title {
+            font-weight: 600;
+            color: #FFD700;
+        }
+        .history-item .details .subtitle {
+            font-size: 0.85rem;
+            color: #bbb;
+        }
+        .history-item .amount {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+
+        /* --- START: Market Page Styles (Shared styles for header/banner) --- */
+        #market-page, #home-page {
+            overflow-x:hidden;
+        }
+        #market-page header, #home-page header {
+            padding:20px;
+            text-align:center;
+            animation:fadeDown 1s ease-in-out;
+        }
+        #market-page header h1, #home-page header h1 {
+            font-size:22px;
+            color:#FFD700;
+            margin:0;
+            text-shadow:0 0 8px rgba(255,215,0,0.6);
+        }
+        #market-page header p, #home-page header p {
+            color:#bbb;
+            font-size:14px;
+            margin-top:6px;
+        }
+        #market-page .banner-wrapper, #home-page .banner-wrapper {
+            display:flex;
+            justify-content:center;
+            margin: 25px 0;
+        }
+        #market-page .banner-container, #home-page .banner-container {
+            position: relative;
+            width: 100%;
+            max-width: 650px;
+            height: 190px;
+            overflow: hidden;
+            border-radius: 16px;
+            padding:4px;
+            background: linear-gradient(135deg,#FFD700,#FF6A00,#FFD700);
+            box-shadow: 0 0 25px rgba(255,215,0,0.5), 0 0 40px rgba(255,106,0,0.3);
+            animation: glowPulse 3s infinite alternate;
+        }
+        #market-page .banner-inner, #home-page .banner-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 14px;
+            overflow: hidden;
+            position: relative;
+        }
+        #market-page .slide, #home-page .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        #market-page .slide.active, #home-page .slide.active {
+            opacity: 1;
+        }
+        #market-page .slide img, #home-page .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        #market-page .caption, #home-page .caption {
+            position: absolute;
+            bottom: 12px;
+            left: 15px;
+            color: #fff;
+            background: rgba(0,0,0,0.6);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            box-shadow:0 2px 6px rgba(0,0,0,0.4);
+        }
+        @keyframes glowPulse {
+            from { box-shadow: 0 0 20px rgba(255,215,0,0.4), 0 0 35px rgba(255,106,0,0.2);}
+            to { box-shadow: 0 0 30px rgba(255,215,0,0.8), 0 0 55px rgba(255,106,0,0.5);}
+        }
+        #market-page .grid, #home-page .grid {
+            display:flex;
+            flex-direction:column;
+            gap:16px;
+            padding:16px;
+        }
+        #market-page .card{
+            background:rgba(255,255,255,0.05);
+            border:1px solid rgba(255,255,255,0.1);
+            border-radius:14px;
+            padding:18px;
+            text-align:center;
+            backdrop-filter:blur(12px);
+            box-shadow:0 4px 14px rgba(255,215,0,0.15);
+            transition:transform 0.4s,box-shadow 0.4s;
+            opacity:0;
+            transform:translateY(30px);
+            animation:fadeUp 1s ease forwards;
+        }
+        #market-page .card:nth-child(1){animation-delay:0.2s;}
+        #market-page .card:nth-child(2){animation-delay:0.4s;}
+        #market-page .card:nth-child(3){animation-delay:0.6s;}
+        #market-page .card:hover{
+            transform:scale(1.05);
+            box-shadow:0 8px 25px rgba(255,215,0,0.4);
+        }
+        #market-page .logo{
+            height:40px;
+            margin-bottom:10px;
+            transition:transform 0.4s;
+        }
+        #market-page .card:hover .logo{transform:scale(1.2) rotate(5deg);}
+        #market-page .card h2{
+            font-size:18px;
+            color:#FFD700;
+            margin:8px 0;
+        }
+        #market-page .card p{
+            color:#aaa;
+            font-size:13px;
+            min-height:36px;
+        }
+        #market-page .price{
+            margin-top:8px;
+            font-size:15px;
+            font-weight:bold;
+            color:#00FF7F;
+        }
+        #market-page .btn.buy{
+            display:inline-block;
+            margin-top:12px;
+            padding:12px;
+            border-radius:10px;
+            font-weight:bold;
+            text-decoration:none;
+            font-size:15px;
+            width:100%;
+            box-sizing:border-box;
+            transition:all 0.3s;
+            position:relative;
+            overflow:hidden;
+            background:linear-gradient(90deg,#FFD700,#FF6A00);
+            color:#000;
+            box-shadow:0 4px 12px rgba(255,215,0,0.4);
+        }
+        #market-page .btn.buy::before{
+            content:"";
+            position:absolute;
+            top:0;
+            left:-100%;
+            width:100%;
+            height:100%;
+            background:rgba(255,255,255,0.5);
+            transform:skewX(-20deg);
+        }
+        #market-page .btn.buy:hover::before{animation:shimmer 1s;}
+        #market-page footer{
+            margin:24px 0;
+            color:#777;
+            font-size:12px;
+            text-align:center;
+            padding:0 12px;
+            animation:fadeUp 1s ease forwards;
+            animation-delay:2s;
+            opacity:0;
+        }
+        #market-page .plans{
+            display:flex;
+            justify-content:space-around;
+            margin-top:10px;
+            gap:8px;
+        }
+        #market-page .plan{
+            background:rgba(255,255,255,0.08);
+            border:1px solid rgba(255,215,0,0.3);
+            padding:8px 12px;
+            border-radius:8px;
+            flex:1;
+            font-size:13px;
+            color:#eee;
+        }
+        #market-page .plan strong{
+            display:block;
+            font-size:15px;
+            margin-top:4px;
+            color:#00FF7F;
+        }
+        @keyframes fadeUp{
+            to{opacity:1;transform:translateY(0);}
+        }
+        @keyframes fadeDown{
+            from{opacity:0;transform:translateY(-20px);}
+            to{opacity:1;transform:translateY(0);}
+        }
+        @keyframes shimmer{
+            from{left:-100%;}
+            to{left:100%;}
+        }
+        #market-page .side-banner {
+            position: fixed;
+            top: 40%;
+            right: 0;
+            background: linear-gradient(135deg,#FFD700,#FF6A00);
+            padding: 10px;
+            border-radius: 10px 0 0 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255,215,0,0.5);
+            transition: transform 0.3s;
+            z-index: 1000;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+        }
+        #market-page .side-banner img {
+            height:40px;
+            width:40px;
+        }
+        #market-page .side-banner:hover {
+            transform: scale(1.1);
+        }
+        /* --- END: Market Page Styles --- */
+
+        /* --- START: New App Task Styles --- */
+        .app-task-card {
+            background: rgba(40, 40, 40, 0.7);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .app-task-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .app-task-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .app-task-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: contain;
+            background-color: rgba(255,255,255,0.1);
+        }
+        .app-task-title {
+            font-weight: 600;
+            font-size: 16px;
+            color: #f0f0f0;
+        }
+        .app-task-reward {
+            font-size: 13px;
+            font-weight: 500;
+            color: #FFD700;
+        }
+        .app-task-details-content {
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+            color: #ccc;
+        }
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .status-pending { background-color: rgba(251, 191, 36, 0.15); color: #FBBF24; }
+        .status-approved { background-color: rgba(52, 211, 153, 0.15); color: #34D399; }
+        .status-rejected { background-color: rgba(248, 113, 113, 0.15); color: #F87171; }
+        
+        /* Logout বাটন লুকিয়ে রাখার জন্য যোগ করা হয়েছে */
+        #logout-btn { 
+            display: none !important;
+        }
+        /* --- END: New App Task Styles --- */
+    </style>
+</head>
+<body class="max-w-md mx-auto">
+
+    <div id="loader" class="hidden fixed inset-0 dark-bg bg-opacity-75 flex items-center justify-center z-50">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#D4AF37]"></div>
+    </div>
+
+    <div id="welcome-page" class="min-h-screen p-4 flex-col justify-center items-center main-page">
+        <div class="welcome-container">
+            <div class="frame">
+                <div class="grid">
+                  <div class="stat-card" id="card-members">
+                    <div class="stat-title">TOTAL Member</div>
+                    <div class="stat-value" data-target="1236">0</div>
+                  </div>
+                  <div class="stat-card" id="card-active">
+                    <div class="stat-title">TOTAL ACTIVE</div>
+                    <div class="stat-value" data-target="1132">0</div>
+                  </div>
+                  <div class="stat-card" id="card-withdraw">
+                    <div class="stat-title">TOTAL উত্তোলন</div>
+                    <div class="stat-value" data-target="14786">0</div>
+                  </div>
+                  <div class="stat-card" id="card-rating">
+                    <div class="stat-title">রেটিং</div>
+                    <div class="stat-value" data-target="4.9">0</div>
+                  </div>
+                </div>
+                <button id="welcome-continue-btn" class="btn">🚀 Start Now</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="auth-section" class="min-h-screen p-4 flex-col justify-center items-center main-page">
+        <div class="w-full max-w-sm card-bg p-8 rounded-2xl">
+            <div class="text-center mb-6">
+                
+                <h1 class="text-3xl font-extrabold text-accent-gradient mt-4">𝐄𝐗𝐏𝐄𝐑𝐓𝟓𝐊</h1>
+                <p class="text-gray-400 mt-1">লগইন করুন বা সাইন আপ করুন</p>
+            </div>
+            <div id="auth-container">
+                <div id="login-view">
+                    <input id="login-email" type="email" placeholder="Email" class="w-full p-3 rounded-lg input-field mb-4">
+                    <input id="login-password" type="password" placeholder="Password" class="w-full p-3 rounded-lg input-field mb-2">
+                    <div class="text-right mb-4">
+                        <a href="#" id="forgot-password-link" class="text-sm font-semibold text-[#D4AF37] hover:underline">Forgot Password?</a>
+                    </div>
+                    <button id="login-btn" class="w-full p-3 rounded-lg btn-gradient mb-4">Login</button>
+                    <p class="text-center text-gray-400">No account? <a href="#" id="show-signup" class="font-semibold text-[#D4AF37]">Sign Up</a></p>
+                </div>
+                <div id="signup-view" class="hidden">
+                     <input id="signup-name" type="text" placeholder="Full Name" class="w-full p-3 rounded-lg input-field mb-4">
+                    <input id="signup-email" type="email" placeholder="Email" class="w-full p-3 rounded-lg input-field mb-4">
+                    <input id="signup-password" type="password" placeholder="Password" class="w-full p-3 rounded-lg input-field mb-4">
+                    <button id="signup-btn" class="w-full p-3 rounded-lg btn-gradient mb-4">Sign Up</button>
+                    <p class="text-center text-gray-400">Already have an account? <a href="#" id="show-login" class="font-semibold text-[#D4AF37]">Login</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="app-container" class="min-h-screen flex-col main-page">
+        <header class="header flex items-center justify-between p-4 sticky top-0 z-10">
+            <h1 class="text-xl font-bold text-accent-gradient">𝐄𝐗𝐏𝐄𝐑𝐓𝟓𝐊</h1>
+            <div id="header-balance-display" class="font-bold text-[#D4AF37]">৳0.00</div>
+        </header>
+
+        <main class="flex-grow pb-20">
+            <div id="home-page" class="p-4 space-y-6 sub-page">
+                <div class="banner-wrapper">
+                  <div class="banner-container">
+                    <div class="banner-inner">
+                      <div class="slide active">
+                        <a href="https://example.com/mail" target="_blank">
+                          <img src="https://i.postimg.cc/zBp8rCX9/Yellow-Orange-Modern-Marketing-Courses-You-Tube-Thumbnail-20250910-185659-0000.png" alt="Slide 1">
+                        </a>
+                        <div class="caption">কম দামে MAIL কিনুন</div>
+                      </div>
+                      <div class="slide">
+                        <a href="https://example.com/refer" target="_blank">
+                          <img src="https://i.postimg.cc/W1syFD8p/Grey-Blue-Illustration-Refer-a-Friend-Instagram-Post-1080-x-720-px-20250917-223749-0000.png" alt="Slide 2">
+                        </a>
+                        <div class="caption">বেশি বেশি রেফার করুন</div>
+                      </div>
+                      <div class="slide">
+                        <a href="https://example.com/tasks" target="_blank">
+                          <img src="https://i.postimg.cc/52HsFwvV/Black-and-Orange-Money-You-Tube-Thumbnail-20250917-224706-0000.png" alt="Slide 3">
+                        </a>
+                        <div class="caption">TASKS থেকে ইনকাম করুন</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="card-bg p-5 rounded-xl">
+                    <p class="text-gray-400 text-sm mb-1">Your Balance</p>
+                    <div class="flex items-center justify-between">
+                        <p id="balance-display" class="text-4xl font-bold">৳0.00</p>
+                        <button id="home-withdraw-btn" class="btn-gradient px-6 py-2 rounded-lg">Withdraw</button>
+                    </div>
+                </div>
+
+                <section>
+                    <h2 class="text-lg font-semibold px-2 mb-3">Menu</h2>
+                    <div class="space-y-3">
+                         <div class="card-bg p-4 rounded-lg flex items-center justify-between">
+                            <div class="flex items-center space-x-4"><i data-lucide="youtube" class="w-8 h-8 text-red-500"></i><div><h3 class="font-semibold">Tutorial</h3><p class="text-xs text-gray-400">কিভাবে কাজ করবেন দেখুন</p></div></div>
+                            <a href="https://youtu.be/ajjEcCY4qOg?si=axyWRgZ7bt3Im_la" target="_blank" class="bg-red-600 text-white font-bold px-4 py-2 rounded-lg text-sm btn">ক্লিক করুন</a>
+                        </div>
+                        <div class="card-bg p-4 rounded-lg flex items-center justify-between">
+                            <div class="flex items-center space-x-4"><i data-lucide="send" class="w-8 h-8 text-sky-500"></i><div><h3 class="font-semibold">𝐄𝐗𝐏𝐄𝐑𝐓𝟓𝐊</h3><p class="text-xs text-gray-400">আপডেট পেতে জয়েন করুন</p></div></div>
+                            <a href="https://t.me/Life_Work_BD/259" target="_blank" class="bg-blue-600 text-white font-bold px-4 py-2 rounded-lg text-sm btn">ক্লিক করুন</a>
+                        </div>
+                        <div class="card-bg p-4 rounded-lg flex items-center justify-between">
+                            <div class="flex items-center space-x-4"><i data-lucide="headset" class="w-8 h-8 text-green-400"></i><div><h3 class="font-semibold">Support Team</h3><p class="text-xs text-gray-400">আপনার সমস্যা সমাধান করুন</p></div></div>
+                            <a href="https://t.me/EXPERT3xbot" target="_blank" class="bg-green-600 text-white font-bold px-4 py-2 rounded-lg text-sm btn">ক্লিক করুন</a>
+                        </div>
+                        <div class="card-bg p-4 rounded-lg flex items-center justify-between">
+                            <div class="flex items-center space-x-4"><span class="text-3xl">🤩</span><div><h3 class="font-semibold">Go to Tasks</h3><p class="text-xs text-gray-400">ইনকাম করো সহজে প্রতিদিন</p></div></div>
+                            <button class="bg-gray-200 text-black font-bold px-4 py-2 rounded-lg text-sm btn" onclick="navigateTo('tasks-page')">INCOME</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div id="tasks-page" class="p-4 space-y-6 sub-page">
+                <div>
+                    <h2 class="text-xl font-bold text-center">🎯 Complete Tasks & Earn</h2>
+                    <p class="text-gray-400 text-center mb-4">ভিডিও দেখে কোড দিন, রিওয়ার্ড পান।</p>
+                    <div id="task-list" class="space-y-4"></div>
+                </div>
+            </div>
+            
+            <div id="apps-page" class="p-4 space-y-6 sub-page">
+                <div class="space-y-6">
+                    <h2 class="text-xl font-bold text-center">Apps Download Tasks</h2>
+                    <p class="text-gray-400 text-center mb-4">অ্যাপস ডাউনলোড করে আয় করুন।</p>
+
+                     <div id="app-download-list" class="space-y-4">
+                        <p class="text-gray-400 text-center">Loading app download tasks...</p>
+                    </div>
+
+<div id="more-apps-section" class="mt-8 pt-6 border-t border-gray-700">
+  <h2 class="text-xl font-bold text-center">📲 More Apps</h2>
+  <p class="text-gray-400 text-center mb-4">আমাদের অন্যান্য অ্যাপস থেকেও আয় করুন।</p>
+  <div class="grid grid-cols-2 gap-4">
+    
+    <a href="https://t.me/GMAIL_SHOP_bot/Shop" target="_blank" 
+       class="card-bg p-4 rounded-lg flex flex-col items-center justify-center text-center hover:bg-gray-700 transition-colors">
+      <img src="https://i.postimg.cc/1XQ2QjrP/Purple-Circle-Creative-Illustrative-Online-Shop-Logo-20250922-154720-0000.png" alt="Gmail Shop" class="w-12 h-12 mb-2 rounded-lg">
+      <h4 class="font-semibold">GMAIL SHOP</h4>
+      <p class="text-xs text-gray-400">MAIL Buy-Sell to earn money 🤑</p>
+    </a>
+    
+    <a href="https://yourapp.com" target="_blank" 
+       class="card-bg p-4 rounded-lg flex flex-col items-center justify-center text-center hover:bg-gray-700 transition-colors">
+      <img src="https://i.postimg.cc/7hTd1GyZ/air-drop-logo-96485-1865.jpg" alt="App 2" class="w-12 h-12 mb-2 rounded-lg">
+      <h4 class="font-semibold">Airdrop</h4>
+      <p class="text-xs text-gray-400">Coming Soon.</p>
+    </a>
+    
+  </div>
+</div>
+
+                </div>
+            </div>
+
+			<div id="market-page" class="sub-page">
+			  <header>  
+				<h1>𝐄𝐗𝐏𝐄𝐑𝐓𝟓𝐊</h1>
+				<p>🛒 কেনাকাটা করুন আর উপভোগ করুন ৩০% ডিসকাউন্ট – শুধুমাত্র এখান থেকে!</p>
+			  </header>
+
+			  <div class="grid">
+				<div class="banner-wrapper">
+				  <div class="banner-container">
+					<div class="banner-inner">
+
+					  <div class="slide active">
+						<a href="https://example.com/mail" target="_blank">
+						  <img src="https://i.postimg.cc/zBp8rCX9/Yellow-Orange-Modern-Marketing-Courses-You-Tube-Thumbnail-20250910-185659-0000.png" alt="Slide 1">
+						</a>
+						<div class="caption">কম দামে MAIL কিনুন</div>
+					  </div>
+
+					  <div class="slide">
+						<a href="https://example.com/refer" target="_blank">
+						  <img src="https://i.postimg.cc/W1syFD8p/Grey-Blue-Illustration-Refer-a-Friend-Instagram-Post-1080-x-720-px-20250917-223749-0000.png" alt="Slide 2">
+						</a>
+						<div class="caption">বেশি বেশি রেফার করুন</div>
+					  </div>
+
+					  <div class="slide">
+						<a href="https://example.com/tasks" target="_blank">
+						  <img src="https://i.postimg.cc/52HsFwvV/Black-and-Orange-Money-You-Tube-Thumbnail-20250917-224706-0000.png" alt="Slide 3">
+						</a>
+						<div class="caption">TASKS থেকে ইনকাম করুন</div>
+					  </div>
+
+					  <div class="slide">
+						<a href="https://example.com/bot" target="_blank">
+						  <img src="https://i.postimg.cc/jjLxJqQ9/Purple-And-White-Modern-Mobile-App-Promotion-Instagram-Post-1080-x-720-px-20250917-230452-0000.png" alt="Slide 4">
+						</a>
+						<div class="caption">কম দামে টেলিগাম বট কিনুন</div>
+					  </div>
+
+					  <div class="slide">
+						<a href="https://example.com/bd" target="_blank">
+						  <img src="https://i.postimg.cc/W1YMLnNk/1-20250917-232703-0000.png" alt="Slide 5">
+						</a>
+						<div class="caption">BANGLADESH</div>
+					  </div>
+
+					</div>
+				  </div>
+				</div>
+
+				<div class="card">
+				  <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" class="logo" alt="Telegram" />
+				  <h2>Telegram Premium</h2>
+				  <p>💰 কম দামে প্রিমিয়াম ➤ একদম সহজে!</p>
+				  <div class="plans">
+					<div class="plan"><span>মাসিক</span><strong>৳599</strong></div>
+					<div class="plan"><span>৬ মাস</span><strong>৳2,600</strong></div>
+					<div class="plan"><span>বার্ষিক</span><strong>৳4,200</strong></div>
+				  </div>
+				  <a href="https://wa.me/8801827750260?text=%E0%A6%86%E0%A6%AE%E0%A6%BF%20Telegram%20Premium%20%E0%A6%95%E0%A6%BF%E0%A6%A8%E0%A6%A4%E0%A7%87%20%E0%A6%9A%E0%A6%BE%E0%A6%87" class="btn buy">এখনই কিনুন</a>
+				</div>
+
+                    <div class="card">
+                      <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" class="logo" alt="YouTube" />
+                      <h2>YouTube Premium</h2>
+                      <p>Ad-Free ভিডিও, ব্যাকগ্রাউন্ড প্লে, YouTube Music ফ্রি।</p>
+                      <div class="plans">
+                        <div class="plan"><span>মাসিক</span><strong>৳299</strong></div>
+                      </div>
+                      <a href="https://wa.me/8801827750260?text=%E0%A6%86%E0%A6%AE%E0%A6%BF%20YouTube%20Premium%20%E0%A6%A8%E0%A6%BF%E0%A6%A4%E0%A7%87%20%E0%A6%9A%E0%A6%BE%E0%A6%87" class="btn buy">এখনই কিনুন</a>
+                    </div>
+
+                    <div class="card">
+                      <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" class="logo" alt="Telegram Channel" />
+                      <h2>Telegram Channel Sell</h2>
+                      <p>🛒 কম দামে টেলিগ্রাম চ্যানেল কিনুন – এখনই সুযোগ নিন!</p>
+                      <ul style="text-align:left; font-size:13px; color:#aaa; margin:10px 0 0 20px; padding:0; list-style-type:disc;">
+                        <li>@Life_Work_BD — 1.7k Active Member</li>
+                        <li>@Lifes_work_report — 700+ Active Member</li>
+                        <li>@SAIDULEXPERT — 200+ Active Member</li>
+                      </ul>
+                      <a href="https://wa.me/8801827750260?text=%E0%A6%86%E0%A6%AE%E0%A6%BF%20Telegram%20Channel%20%E0%A6%95%E0%A6%BF%E0%A6%A8%E0%A6%A4%E0%A7%87%20%E0%A6%9A%E0%A6%BE%E0%A6%87" class="btn buy">চ্যানেল কিনুন</a>
+                    </div>
+
+                    <div class="card">
+                      <img src="https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png" class="logo" alt="YouTube Channel" />
+                      <h2>YouTube Channel Sell</h2>
+                      <p>🔥 কম দামে ইউটিউব চ্যানেল! দ্রুত করুন, হাতছাড়া করবেন না!</p>
+                      <ul style="text-align:left; font-size:13px; color:#aaa; margin:10px 0 0 20px; padding:0; list-style-type:disc;">
+                        <li>@saidulexpert — 100 Subscriber</li>
+                      </ul>
+                      <a href="https://wa.me/8801827750260?text=%E0%A6%86%E0%A6%AE%E0%A6%BF%20YouTube%20Channel%20%E0%A6%95%E0%A6%BF%E0%A6%A8%E0%A6%A4%E0%A7%87%20%E0%A6%9A%E0%A6%BE%E0%A6%87" class="btn buy">চ্যানেল কিনুন</a>
+                    </div>                      
+                      
+                    <div class="card">
+                      <img src="https://cdn-icons-png.flaticon.com/512/10585/10585060.png" class="logo" alt="Free Fire" />
+                      <h2>FREE FIRE আইডি কিনুন</h2>
+                      <p>💎 কম দামে ডায়মন্ড & ফ্রী ফায়ার আইডি কিনুন – একদম সহজে!</p>
+                      <ul style="text-align:left; font-size:13px; color:#aaa; margin:10px 0 0 20px; padding:0; list-style-type:disc;">
+                        <li>💎 Buy IDs & Diamonds at Low Price!</li>
+                        <li>💰 Sell Accounts at High Price!</li>
+                        <li>✅ 100% Trusted – Safe & Easy!</li>
+                      </ul>
+                      <a href="https://wa.me/8801827750260?text=%E0%A6%86%E0%A6%AE%E0%A6%BF%20Free%20Fire%20%E0%A6%8F%E0%A6%B0%20%E0%A6%86%E0%A6%87%E0%A6%A1%E0%A6%BF%20%E0%A6%AC%E0%A6%BE%20Diamond%20%E0%A6%95%E0%A6%BF%E0%A6%A8%E0%A6%A4%E0%A7%87%20%E0%A6%9A%E0%A6%BE%E0%A6%87" class="btn buy">এখনই কিনুন</a>
+                    </div>
+
+                    <div class="card">
+                      <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" class="logo" alt="Bot" />
+                      <h2>Buy Bot</h2>
+                      <p>🤖 যেকোনো ধরনের বট কম দামে বানিয়ে – একদম সহজে!</p>
+                      <div class="price">INBOX FAST</div>
+                      <a href="https://wa.me/8801827750260?text=%E0%A6%86%E0%A6%AE%E0%A6%BF%20Telegram%20Bot%20%E0%A6%AC%E0%A6%BE%E0%A6%A8%E0%A6%BF%E0%A6%AF%E0%A6%BC%E0%A7%87%20%E0%A6%A8%E0%A6%BF%E0%A6%A4%E0%A7%87%20%E0%A6%9A%E0%A6%BE%E0%A6%87" class="btn buy">এখনই কিনুন</a>
+                    </div>
+
+                    <div class="card">
+                      <img src="https://cdn-icons-png.flaticon.com/512/891/891462.png" class="logo" alt="Sell Account" />
+                      <h2>যে কোনো একাউন্ট বিক্রি করুন</h2>
+                      <p>আপনার সোশ্যাল মিডিয়া, গেম বা ডিজিটাল একাউন্ট সহজেই বিক্রি করুন।</p>
+                      <div class="price">UNLIMITED</div>
+                      <a href="https://wa.me/8801827750260?text=%E0%A6%86%E0%A6%AE%E0%A6%BF%20%E0%A6%86%E0%A6%87%E0%A6%A1%E0%A6%BF%20%E0%A6%AC%E0%A6%BF%E0%A6%95%E0%A7%8D%E0%A6%B0%E0%A6%BF%20%E0%A6%95%E0%A6%B0%E0%A6%A4%E0%A7%87%20%E0%A6%9A%E0%A6%BE%E0%A6%87" class="btn buy">এখনই বিক্রি করুন</a>    </div>
+                  </div>
+
+                  <footer>
+                    © 2025 𝐄𝐗𝐏𝐄𝐑𝐓𝟓𝐊 Seller • Contact: +8801864260513 • Payment: Nagod / bKash / Bank / USDT
+		</div>          
+            <div id="redeem-page" class="p-4 space-y-6 sub-page">
+                <div class="payment-container">
+                    <h2 class="text-2xl text-center mb-6">🎁 Redeem Code</h2>
+                    <div class="card-bg p-5 rounded-xl text-center">
+                        <i data-lucide="gift" class="w-12 h-12 text-green-400 mx-auto mb-4"></i>
+                        <h3 class="text-lg font-semibold mb-2">Have a special code?</h3>
+                        <p class="text-sm text-gray-400 mb-4">Enter it here to unlock your bonus!</p>
+                        <input id="redeem-code-input-page" type="text" placeholder="Enter Redeem Code" class="w-full p-3 rounded-lg input-field text-center uppercase mb-4">
+                        <button id="redeem-submit-btn" class="w-full p-3 rounded-lg btn-gradient">Redeem Now</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="all-history-page" class="p-4 space-y-6 sub-page">
+                <h2 class="text-2xl text-center font-bold mb-6">📊 Transaction History</h2>
+        
+                <div class="card-bg p-4 rounded-xl">
+                    <h3 class="text-xl font-semibold mb-3">Income History</h3>
+                    <div id="income-history-list" class="space-y-3">
+                        <p class="text-gray-400 text-center">No income records found.</p>
+                    </div>
+                </div>
+        
+                <div class="card-bg p-4 rounded-xl">
+                    <h3 class="text-xl font-semibold mb-3">Withdrawal History</h3>
+                    <div id="withdrawal-history-list-all" class="space-y-3">
+                        <p class="text-gray-400 text-center">No withdrawal records found.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="withdraw-page" class="p-4 space-y-6 sub-page">
+                <div class="payment-container">
+                    <h2 class="text-2xl">💸 Withdraw Funds</h2>
+
+                    <div class="card-bg p-4 rounded-xl text-center mb-6">
+                        <p class="text-gray-400 text-sm mb-1">Available to Withdraw</p>
+                        <p id="withdraw-balance-display" class="text-3xl font-bold">৳0.00</p>
+                    </div>
+
+                    <div class="payment-form">
+                        <div>
+                            <label for="withdraw-amount">টাকার পরিমাণ (Minimum ৳100)</label>
+                            <input id="withdraw-amount" type="number" placeholder="Minimum ৳100" class="w-full p-3 rounded-lg input-field">
+                        </div>
+
+                        <div>
+                            <label for="withdraw-method">পেমেন্ট মেথড সিলেক্ট করুন</label>
+                            <select id="withdraw-method" class="w-full p-3 rounded-lg input-field">
+                                <option value="">Select Payment Method</option>
+                                <option value="Nagad">নগদ</option>
+                                <option value="bKash">বিকাশ</option>
+                                <option value="Rocket">রকেট</option>
+                                <option value="Binance">Binance</option>
+                            </select>
+                        </div>
+
+                        <div>
+                           <label for="withdraw-account">আপনার একাউন্ট নম্বর / Pay ID</label>
+                           <input id="withdraw-account" type="text" placeholder="Your Account Number / Pay ID" class="w-full p-3 rounded-lg input-field">
+                        </div>
+                        
+                        <div id="fee-display-area" class="hidden text-center p-3 rounded-lg text-sm transition-all duration-300">
+                            </div>
+
+                        <button id="withdraw-btn" class="submit-btn btn-disabled" disabled>Submit Request</button>
+                    </div>
+                </div>
+
+                <div class="mt-8">
+                    <h3 class="text-lg font-semibold mb-3 text-center">Withdrawal History</h3>
+                    <div id="withdrawal-history-list" class="space-y-3"></div>
+                </div>
+            </div>
+            
+            <div id="profile-page" class="p-4 space-y-6 sub-page">
+                <div class="card-bg p-6 rounded-2xl flex flex-col items-center text-center">
+                    <div class="relative mb-4">
+                        <img id="profile-pic" class="w-24 h-24 rounded-full border-2 border-[#D4AF37] object-cover hidden" src="" alt="Profile Picture">
+                        <div id="profile-initials-avatar" class="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center border-2 border-[#D4AF37]">
+                            <span id="profile-initials" class="text-3xl font-bold text-gray-300"></span>
+                        </div>
+                    </div>
+                    <h3 id="profile-name" class="text-2xl font-bold">Loading...</h3>
+                    <p id="profile-username" class="text-gray-400">@username</p>
+                    <p id="profile-id" class="text-sm text-gray-500 mt-2">ID: 123456</p>
+                </div>
+
+                <div class="card-bg p-4 rounded-2xl">
+                    <div class="grid grid-cols-3 gap-2 text-center">
+                        <div>
+                            <button onclick="navigateTo('redeem-page')" class="w-16 h-16 mx-auto bg-gray-700/50 rounded-full flex items-center justify-center mb-2 hover:bg-gray-600/50 transition-colors">
+                                <i data-lucide="gift" class="w-7 h-7 text-gray-300"></i>
+                            </button>
+                            <p class="text-sm font-semibold text-gray-300">Redeem</p>
+                        </div>
+                        <div>
+                            <button onclick="navigateTo('withdraw-page')" class="w-16 h-16 mx-auto bg-gray-700/50 rounded-full flex items-center justify-center mb-2 hover:bg-gray-600/50 transition-colors">
+                                <i data-lucide="arrow-up-from-line" class="w-7 h-7 text-gray-300"></i>
+                            </button>
+                            <p class="text-sm font-semibold text-gray-300">Withdraw</p>
+                        </div>
+                        <div>
+                            <button onclick="navigateTo('all-history-page')" class="w-16 h-16 mx-auto bg-gray-700/50 rounded-full flex items-center justify-center mb-2 hover:bg-gray-600/50 transition-colors">
+                                <i data-lucide="history" class="w-7 h-7 text-gray-300"></i>
+                            </button>
+                            <p class="text-sm font-semibold text-gray-300">History</p>
+                        </div>
+                        </div>
+                </div>
+                
+                <div class="space-y-2">
+                    <button id="toggle-personal-info-btn" class="w-full card-bg p-4 rounded-2xl flex justify-between items-center text-left">
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="info" class="w-5 h-5 text-gray-300"></i>
+                            <span class="font-bold text-lg text-gray-100">Personal Info</span>
+                        </div>
+                        <i id="personal-info-chevron" data-lucide="chevron-down" class="w-6 h-6 text-gray-400 transition-transform duration-300"></i>
+                    </button>
+
+                    <div id="personal-info-content" class="hidden card-bg p-6 rounded-2xl space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="mail" class="w-5 h-5 text-gray-400"></i>
+                            <div>
+                                <p class="text-xs text-gray-400">Email Address</p>
+                                <p id="profile-email" class="font-semibold text-gray-200">loading...</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="key-round" class="w-5 h-5 text-gray-400"></i>
+                            <div>
+                                <p class="text-xs text-gray-400">Password</p>
+                                <p class="font-semibold text-gray-200">••••••••••</p>
+                            </div>
+                        </div>
+                        <button id="change-password-btn" class="w-full p-2 mt-4 rounded-lg btn-outline-accent">
+                            Change Password
+                        </button>
+                        <button id="logout-btn" class="w-full p-2 mt-4 rounded-lg bg-red-600 text-white font-bold">
+                            Logout
+                        </button>
+                    </div>
+                </div>
+
+                <p class="text-center text-gray-500 text-sm mt-8">
+                    Developed by <a href="https://t.me/SAIDULEP" target="_blank" class="font-semibold text-[#D4AF37] hover:underline">SAIDUL</a>
+                </p>
+            </div>
+
+        </main>
+
+        <nav class="bottom-nav sticky bottom-0 grid grid-cols-5 items-center text-center">
+            <a href="#" class="nav-link" data-page="market-page"><i data-lucide="shopping-bag" class="mx-auto w-6 h-6 icon"></i><span>Market</span></a>
+            <a href="#" class="nav-link" data-page="tasks-page"><i data-lucide="list-checks" class="mx-auto w-6 h-6 icon"></i><span>Tasks</span></a>
+            <a href="#" id="home-nav-link" class="nav-link" data-page="home-page"><i data-lucide="home" class="mx-auto icon"></i><span>Home</span></a>
+            <a href="#" class="nav-link" data-page="apps-page"><i data-lucide="layout-grid" class="mx-auto w-6 h-6 icon"></i><span>Apps</span></a>
+            <a href="#" class="nav-link" data-page="profile-page"><i data-lucide="user" class="mx-auto w-6 h-6 icon"></i><span>Profile</span></a>
+        </nav>
+    </div>
+
+    <div id="custom-alert" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+        <div class="bg-gray-800 rounded-lg p-6 w-full max-w-sm text-center border border-gray-700">
+            <p id="alert-message" class="mb-5 whitespace-pre-wrap"></p>
+            <button id="alert-ok-btn" class="btn-gradient px-8 py-2 rounded-lg">OK</button>
+        </div>
+    </div>
+
+    <script type="module">
+        const ADMIN_UID = "wh19NiOx3xaS4VigiikuIVN3hfB2"; // <-- IMPORTANT: SET YOUR ADMIN UID HERE
+
+        // আপনার ফায়ারবেস প্রোজেক্টের তথ্য এখানে আপডেট করুন
+        // Firebase কনসোল থেকে এই তথ্যগুলো নিতে হবে।
+        const firebaseConfig = {
+          apiKey: "AIzaSyD127erSBVUQ2Dh96kPNhd18sEw26QT_EI",
+          authDomain: "expertearn.firebaseapp.com",
+          databaseURL: "https://expertearn-default-rtdb.firebaseio.com",
+          projectId: "expertearn",
+          storageBucket: "expertearn.firebasestorage.app",
+          messagingSenderId: "21085895948",
+          appId: "1:21085895948:web:29d8a6c54f279950579d29"
+        };
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, limit, runTransaction, getCountFromServer, increment, Timestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let crntUser = null;
+        let usrData = null;
+        let appConf = {};
+        let homeSliderInterval = null; // Slider for home page
+        let marketSliderInterval = null; // Slider for market page
+
+        const loader = document.getElementById('loader');
+
+        window.onload = () => {
+            try { window.Telegram.WebApp.ready(); window.Telegram.WebApp.expand(); } catch (e) { console.warn("TG WebApp failed."); }
+            lucide.createIcons();
+            setupEvtListeners();
+            showMainPage('auth-section');
+            onAuthStateChanged(auth, authStCh);
+        };
+
+        async function authStCh(user) {
+            loader.style.display = 'flex';
+            if (user) {
+                crntUser = user;
+                await fchAppConf();
+                await fchUsrDt();
+
+                if (!usrData) {
+                    showAlert("Could not load your user profile. Please try logging in again.");
+                    await signOut(auth);
+                    loader.style.display = 'none';
+                    return;
+                }
+
+                if (usrData.isBlocked) {
+                    showAlert("Your account has been blocked.");
+                    await signOut(auth);
+                    loader.style.display = 'none';
+                    return;
+                }
+                
+                if (usrData?.hasSeenWelcomePopup === false) {
+                    await renderWelcomePage();
+                    showMainPage('welcome-page');
+                } else {
+                    showMainPage('app-container');
+                    navigateTo('home-page');
+                }
+                
+                updUI();
+
+            } else {
+                crntUser = null;
+                usrData = null;
+                showMainPage('auth-section');
+            }
+            loader.style.display = 'none';
+        }
+
+        async function fchUsrDt() {
+            if (!crntUser) return;
+            const userRef = doc(db, "users", crntUser.uid);
+            try {
+                const userSnap = await getDoc(userRef);
+                if (userSnap.exists()) {
+                    usrData = userSnap.data();
+                    const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+                    if (tgUser && !usrData.telegramId) {
+                        const tgUpdateData = {
+                            telegramId: tgUser.id,
+                            telegramUsername: tgUser.username || '',
+                            telegramPhotoUrl: tgUser.photo_url || ''
+                        };
+                        await updateDoc(userRef, tgUpdateData);
+                        usrData = {...usrData, ...tgUpdateData};
+                    }
+
+                } else {
+                    console.error("User document not found in Firestore.");
+                    usrData = null;
+                }
+            } catch (error) {
+                console.error("Error fchUsrDt:", error);
+                showAlert("Failed to load user data.");
+                usrData = null;
+            }
+        }
+
+        async function fchAppConf() {
+            const confRef = doc(db, "config", "main");
+            try {
+                const confSnap = await getDoc(confRef);
+                appConf = confSnap.exists() ? confSnap.data() : {
+                    tasksUnlockFee: 30
+                };
+            } catch (error) { console.error("Error fchAppConf:", error); }
+        }
+
+        function updUI() {
+            if (!usrData) return;
+            const balance = (usrData.balance || 0).toFixed(2);
+            document.getElementById('balance-display').textContent = `৳${balance}`;
+            document.getElementById('header-balance-display').textContent = `৳${balance}`;
+            document.getElementById('withdraw-balance-display').textContent = `৳${balance}`;
+        }
+
+        function showMainPage(pageId) {
+            document.querySelectorAll('.main-page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+        
+        function initializeSlider(pageId) {
+            let slides = document.querySelectorAll(`#${pageId} .slide`);
+            if (slides.length > 0) {
+                let index = 0;
+                function showSlide() {
+                  slides.forEach((slide, i) => {
+                    slide.classList.remove("active");
+                    if (i === index) {
+                      slide.classList.add("active");
+                    }
+                  });
+                  index = (index + 1) % slides.length;
+                }
+                showSlide();
+                if(pageId === 'home-page') {
+                    if (homeSliderInterval) clearInterval(homeSliderInterval);
+                    homeSliderInterval = setInterval(showSlide, 3000);
+                } else if(pageId === 'market-page') {
+                    if (marketSliderInterval) clearInterval(marketSliderInterval);
+                    marketSliderInterval = setInterval(showSlide, 3000);
+                }
+            }
+        }
+
+        function navigateTo(pageId) {
+            if (homeSliderInterval) {
+                clearInterval(homeSliderInterval);
+                homeSliderInterval = null;
+            }
+            if (marketSliderInterval) {
+                clearInterval(marketSliderInterval);
+                marketSliderInterval = null;
+            }
+            
+            document.querySelectorAll('.sub-page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === pageId) link.classList.add('active');
+            });
+
+            if (pageId === 'tasks-page') ldTasks();
+            if (pageId === 'apps-page') ldAppTasks();
+            if (pageId === 'redeem-page') { /* No specific load function needed */ }
+            if (pageId === 'all-history-page') ldAllHistory();
+            if (pageId === 'withdraw-page') {
+                ldWdHist();
+                // Reset withdrawal form when navigating to the page
+                document.getElementById('withdraw-amount').value = '';
+                calculateAndDisplayFee(); // This will hide the fee area and disable the button
+            }
+            if (pageId === 'profile-page') ldProfPage();
+            
+            if (pageId === 'home-page' || pageId === 'market-page') {
+                initializeSlider(pageId);
+            }
+
+            lucide.createIcons();
+        }
+        window.navigateTo = navigateTo;
+
+        function setupEvtListeners() {
+            document.getElementById('show-signup').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('login-view').classList.add('hidden'); document.getElementById('signup-view').classList.remove('hidden'); });
+            document.getElementById('show-login').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('signup-view').classList.add('hidden'); document.getElementById('login-view').classList.remove('hidden'); });
+            document.getElementById('signup-btn').addEventListener('click', hndlSgnp);
+            document.getElementById('login-btn').addEventListener('click', hndlLgn);
+            document.getElementById('forgot-password-link').addEventListener('click', (e) => { e.preventDefault(); hndlFrgtPass(); });
+
+            document.getElementById('welcome-continue-btn').addEventListener('click', async () => {
+                loader.style.display = 'flex';
+                try {
+                    await updateDoc(doc(db, "users", crntUser.uid), { hasSeenWelcomePopup: true });
+                    usrData.hasSeenWelcomePopup = true;
+                } catch (error) {
+                    console.error("Failed to update welcome status:", error);
+                } finally {
+                    showMainPage('app-container');
+                    navigateTo('home-page');
+                    loader.style.display = 'none';
+                }
+            });
+
+            document.querySelectorAll('.nav-link').forEach(link => { link.addEventListener('click', (e) => { e.preventDefault(); navigateTo(link.dataset.page); }); });
+
+            document.getElementById('withdraw-btn').addEventListener('click', hndlWdReq);
+            document.getElementById('home-withdraw-btn').addEventListener('click', () => navigateTo('withdraw-page'));
+            document.getElementById('change-password-btn').addEventListener('click', hndlChgPass);
+            document.getElementById('toggle-personal-info-btn').addEventListener('click', tglPersInf);
+            
+            // Add event listener for the withdrawal amount input
+            document.getElementById('withdraw-amount').addEventListener('input', calculateAndDisplayFee);
+            
+            document.getElementById('redeem-submit-btn').addEventListener('click', async () => {
+                const code = document.getElementById('redeem-code-input-page').value;
+                await handleRedeemCode(code);
+            });
+            
+            document.getElementById('logout-btn').addEventListener('click', async () => {
+                if (confirm("Are you sure you want to log out?")) {
+                    await signOut(auth);
+                }
+            });
+        }
+
+        function tglPersInf() {
+            document.getElementById('personal-info-content').classList.toggle('hidden');
+            document.getElementById('personal-info-chevron').classList.toggle('rotate-180');
+        }
+
+        async function hndlSgnp() {
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+
+            if (!name || !email || !password) return showAlert("Please fill all required fields.");
+            loader.style.display = 'flex';
+            
+            try {
+                const userCred = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCred.user;
+                const defUsrData = {
+                    uid: user.uid, 
+                    name: name, 
+                    email: user.email, 
+                    balance: 0, 
+                    tasksUnlocked: true,
+                    createdAt: serverTimestamp(), 
+                    isBlocked: false,
+                    hasSeenWelcomePopup: false
+                };
+                await setDoc(doc(db, "users", user.uid), defUsrData);
+                usrData = defUsrData;
+                showAlert("Signup successful!");
+
+            } catch (error) { 
+                showAlert(error.message); 
+            } finally { 
+                loader.style.display = 'none'; 
+            }
+        }
+
+        async function hndlLgn() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            if (!email || !password) return showAlert("Please enter email and password.");
+            loader.style.display = 'flex';
+            try { await signInWithEmailAndPassword(auth, email, password); } catch (error) { showAlert(error.message); } finally { loader.style.display = 'none'; }
+        }
+
+        async function hndlFrgtPass() {
+            const email = document.getElementById('login-email').value;
+            if (!email) {
+                return showAlert("Please enter your email address in the email field first, then click 'Forgot Password?'.");
+            }
+            if (!confirm(`Send a password reset link to ${email}?`)) return;
+            loader.style.display = 'flex';
+            try {
+                await sendPasswordResetEmail(auth, email);
+                showAlert(`A password reset link has been sent to ${email}. Please check your inbox (and spam folder).`);
+            } catch (error) {
+                console.error("Password reset error:", error);
+                showAlert(`Error: ${error.message}`);
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+        
+        async function fetchUserStats() {
+            const BASE_MEMBERS = 1236;
+            const BASE_ACTIVE = 1132;
+            const BASE_WITHDRAWN = 14786;
+
+            try {
+                const usersCollection = collection(db, "users");
+                const totalMembersSnap = await getCountFromServer(usersCollection);
+                const activeUsersQuery = query(usersCollection, where("isBlocked", "==", false));
+                const activeMembersSnap = await getCountFromServer(activeUsersQuery);
+
+                const withdrawalsCollection = collection(db, "withdrawals");
+                const approvedWithdrawalsQuery = query(withdrawalsCollection, where("status", "==", "approved"));
+                const withdrawalsSnap = await getDocs(approvedWithdrawalsQuery);
+                let totalWithdrawn = 0;
+                withdrawalsSnap.forEach(doc => {
+                    totalWithdrawn += doc.data().amount || 0;
+                });
+
+                return {
+                    totalMembers: BASE_MEMBERS + (totalMembersSnap.data().count || 0),
+                    totalActiveMembers: BASE_ACTIVE + (activeMembersSnap.data().count || 0),
+                    totalWithdrawn: BASE_WITHDRAWN + totalWithdrawn,
+                };
+            } catch (error) {
+                console.error("Error fetching stats:", error);
+                return {
+                    totalMembers: BASE_MEMBERS,
+                    totalActiveMembers: BASE_ACTIVE,
+                    totalWithdrawn: BASE_WITHDRAWN
+                };
+            }
+        }
+
+        async function renderWelcomePage() {
+            const stats = await fetchUserStats();
+            const welcomePage = document.getElementById('welcome-page');
+
+            welcomePage.querySelector('#card-members .stat-value').setAttribute('data-target', stats.totalMembers);
+            welcomePage.querySelector('#card-active .stat-value').setAttribute('data-target', stats.totalActiveMembers);
+            welcomePage.querySelector('#card-withdraw .stat-value').setAttribute('data-target', stats.totalWithdrawn);
+
+            function animateStat(el, duration = 1200) {
+                const targetRaw = el.getAttribute('data-target') || '0';
+                const target = parseFloat(targetRaw);
+                const isFloat = String(targetRaw).includes('.');
+                const start = 0;
+                let frame = 0;
+                const fps = 30;
+                const totalFrames = Math.round(duration / (1000 / fps));
+                const step = (target - start) / totalFrames;
+                const timer = setInterval(() => {
+                    frame++;
+                    let val = start + step * frame;
+                    if (frame >= totalFrames) {
+                        val = target;
+                        clearInterval(timer);
+                    }
+                    el.textContent = isFloat ? val.toFixed(1) : Math.floor(val).toLocaleString('en-US');
+                }, 1000 / fps);
+            }
+
+            welcomePage.querySelectorAll('.stat-value').forEach((el, i) => {
+                setTimeout(() => animateStat(el), i * 150);
+            });
+        }
+        
+        async function ldProfPage() {
+            const profPic = document.getElementById('profile-pic');
+            const avtrDiv = document.getElementById('profile-initials-avatar');
+            const profileNameEl = document.getElementById('profile-name');
+            const profileUsernameEl = document.getElementById('profile-username');
+            const profileIdEl = document.getElementById('profile-id');
+
+            if (usrData.telegramPhotoUrl) {
+                profPic.src = usrData.telegramPhotoUrl;
+                profPic.classList.remove('hidden');
+                avtrDiv.classList.add('hidden');
+            } else {
+                const nameParts = usrData.name.split(' ');
+                const initials = (nameParts[0]?.[0] || '') + (nameParts.length > 1 ? nameParts[nameParts.length - 1][0] : '');
+                document.getElementById('profile-initials').textContent = initials.toUpperCase();
+                profPic.classList.add('hidden');
+                avtrDiv.classList.remove('hidden');
+            }
+
+            profileNameEl.textContent = usrData.name;
+            profileUsernameEl.textContent = usrData.telegramUsername ? `@${usrData.telegramUsername}` : "Not connected via Telegram";
+            profileIdEl.textContent = usrData.telegramId ? `TG ID: ${usrData.telegramId}` : `User UID: ${crntUser.uid.substring(0, 10)}...`;
+            
+            document.getElementById('profile-email').textContent = usrData.email;
+        }
+
+        async function hndlChgPass() {
+            if (!confirm('Do you want to change your password? A reset link will be sent to your email.')) return;
+            const email = auth.currentUser.email;
+            if (!email) return showAlert('Error: Could not find user email.');
+            loader.style.display = 'flex';
+            try {
+                await sendPasswordResetEmail(auth, email);
+                showAlert(`A password reset link has been sent to your email (${email}). Please check your inbox.`);
+            } catch (error) { console.error("Pass reset error:", error); showAlert(`Error: ${error.message}`); } finally { loader.style.display = 'none'; }
+        }
+
+        async function ldAllHistory() {
+            const incomeList = document.getElementById('income-history-list');
+            const withdrawalList = document.getElementById('withdrawal-history-list-all');
+
+            incomeList.innerHTML = '<p class="text-gray-400 text-center">Loading income history...</p>';
+            withdrawalList.innerHTML = '<p class="text-gray-400 text-center">Loading withdrawal history...</p>';
+
+            try {
+                const wdQ = query(collection(db, "withdrawals"), where("userId", "==", crntUser.uid), orderBy("requestedAt", "desc"));
+                const taskSubQ = query(collection(db, "taskSubmissions"), where("userId", "==", crntUser.uid), where("status", "==", "approved"), orderBy("submittedAt", "desc"));
+                const appTaskSubQ = query(collection(db, "appTaskSubmissions"), where("userId", "==", crntUser.uid), where("status", "==", "approved"), orderBy("submittedAt", "desc"));
+                const redeemQ = query(collection(db, "redeemCodes"), where("usedBy", "==", crntUser.uid), orderBy("usedAt", "desc"));
+
+                const [wdSnap, taskSubSnap, appTaskSubSnap, redeemSnap] = await Promise.all([
+                    getDocs(wdQ), getDocs(taskSubQ), getDocs(appTaskSubSnap), getDocs(redeemQ)
+                ]);
+
+                let incomeHistory = [];
+                taskSubSnap.forEach(doc => incomeHistory.push({ type: 'Task Completion', amount: doc.data().reward, timestamp: doc.data().submittedAt }));
+                appTaskSubSnap.forEach(doc => incomeHistory.push({ type: 'App Task Completion', amount: doc.data().reward, timestamp: doc.data().submittedAt }));
+                redeemSnap.forEach(doc => incomeHistory.push({ type: 'Redeem Code', amount: doc.data().amount, timestamp: doc.data().usedAt }));
+
+                incomeHistory.sort((a, b) => {
+                    const timeA = a.timestamp?.toMillis() || 0;
+                    const timeB = b.timestamp?.toMillis() || 0;
+                    return timeB - timeA;
+                });
+
+                if (incomeHistory.length === 0) {
+                    incomeList.innerHTML = '<p class="text-gray-400 text-center">No income records found.</p>';
+                } else {
+                    incomeList.innerHTML = '';
+                    incomeHistory.forEach(item => {
+                        const date = item.timestamp ? item.timestamp.toDate().toLocaleDateString('en-GB') : 'N/A';
+                        incomeList.innerHTML += `
+                            <div class="history-item">
+                                <div class="details">
+                                    <p class="title">${item.type}</p>
+                                    <p class="subtitle">${date}</p>
+                                </div>
+                                <p class="amount text-green-400">+৳${item.amount.toFixed(2)}</p>
+                            </div>`;
+                    });
+                }
+
+                let withdrawalHistory = [];
+                 wdSnap.forEach(doc => {
+                    const data = doc.data();
+                    withdrawalHistory.push({ 
+                        type: 'Withdrawal', 
+                        amount: data.requestedAmount || data.amount, // Fallback for old records
+                        method: data.method, 
+                        status: data.status, 
+                        timestamp: data.requestedAt 
+                    });
+                });
+
+
+                withdrawalHistory.sort((a, b) => {
+                    const timeA = a.timestamp?.toMillis() || 0;
+                    const timeB = b.timestamp?.toMillis() || 0;
+                    return timeB - timeA;
+                });
+
+                if (withdrawalHistory.length === 0) {
+                    withdrawalList.innerHTML = '<p class="text-gray-400 text-center">No withdrawal records found.</p>';
+                } else {
+                    withdrawalList.innerHTML = '';
+                    withdrawalHistory.forEach(item => {
+                        let statusColor = item.status === 'approved' ? 'text-green-400' : item.status === 'rejected' ? 'text-red-400' : 'text-yellow-400';
+                        const date = item.timestamp ? item.timestamp.toDate().toLocaleDateString('en-GB') : 'N/A';
+                        withdrawalList.innerHTML += `
+                            <div class="history-item">
+                                <div class="details">
+                                    <p class="title">${item.method} - <span class="capitalize ${statusColor}">${item.status}</span></p>
+                                    <p class="subtitle">${date}</p>
+                                </div>
+                                <p class="amount text-red-400">-৳${item.amount.toFixed(2)}</p>
+                            </div>`;
+                    });
+                }
+
+            } catch (error) {
+                console.error("Error loading all history:", error);
+                incomeList.innerHTML = '<p class="text-red-400 text-center">Coming soon.</p>';
+                withdrawalList.innerHTML = '<p class="text-red-400 text-center">Coming soon.</p>';
+            }
+        }
+        
+        function calculateAndDisplayFee() {
+            const feeArea = document.getElementById('fee-display-area');
+            const amountInput = document.getElementById('withdraw-amount');
+            const submitBtn = document.getElementById('withdraw-btn');
+            const amount = parseFloat(amountInput.value);
+            const balance = usrData ? usrData.balance : 0;
+
+            // Condition 1: Input is empty or not a number
+            if (isNaN(amount) || amount <= 0) {
+                feeArea.classList.add('hidden');
+                submitBtn.disabled = true;
+                submitBtn.classList.add('btn-disabled');
+                return;
+            }
+
+            // Condition 2: Insufficient balance
+            if (amount > balance) {
+                feeArea.innerHTML = `আপনার অ্যাকাউন্টে পর্যাপ্ত ব্যালেন্স নেই।`;
+                feeArea.classList.remove('bg-green-900/50', 'border-green-700', 'text-green-300', 'hidden');
+                feeArea.classList.add('bg-red-500/20', 'border-red-500', 'text-red-400');
+                submitBtn.disabled = true;
+                submitBtn.classList.add('btn-disabled');
+                return;
+            }
+
+            // Condition 3: Amount is too low (but balance is sufficient)
+            if (amount < 100) {
+                feeArea.innerHTML = `সর্বনিম্ন উইথড্র ৳100।`;
+                feeArea.classList.remove('bg-green-900/50', 'border-green-700', 'text-green-300', 'hidden');
+                feeArea.classList.add('bg-red-500/20', 'border-red-500', 'text-red-400');
+                submitBtn.disabled = true;
+                submitBtn.classList.add('btn-disabled');
+                return;
+            }
+
+            // If all checks pass, enable button and calculate fee
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('btn-disabled');
+            
+            let feePercentage;
+            if (amount <= 500) { feePercentage = 0.08; }
+            else if (amount <= 1000) { feePercentage = 0.06; }
+            else { feePercentage = 0.09; }
+            
+            const fee = amount * feePercentage;
+            const netAmount = amount - fee;
+
+            feeArea.innerHTML = `উইথড্রয়াল ফি: <strong>৳${fee.toFixed(2)}</strong> (${feePercentage * 100}%)<br>আপনি পাবেন: <strong>৳${netAmount.toFixed(2)}</strong>`;
+            feeArea.classList.remove('bg-red-500/20', 'border-red-500', 'text-red-400', 'hidden');
+            feeArea.classList.add('bg-green-900/50', 'border-green-700', 'text-green-300');
+        }
+
+        async function hndlWdReq() {
+            const amount = parseFloat(document.getElementById('withdraw-amount').value);
+            const method = document.getElementById('withdraw-method').value;
+            const account = document.getElementById('withdraw-account').value.trim();
+
+            if (!amount || amount <= 0 || !method || !account) return showAlert("দয়া করে সমস্ত ফিল্ড পূরণ করুন।");
+            if (amount < 100) return showAlert("সর্বনিম্ন উইথড্র ৳100।");
+            if (amount > usrData.balance) return showAlert(`আপনার ব্যালেন্স যথেষ্ট নয়।`);
+
+            let feePercentage;
+            if (amount >= 100 && amount <= 500) { feePercentage = 0.08; } 
+            else if (amount > 500 && amount <= 1000) { feePercentage = 0.06; } 
+            else if (amount > 1000) { feePercentage = 0.05; } 
+            else { return showAlert("ফি গণনার জন্য টাকার পরিমাণটি ভুল।"); }
+
+            const fee = amount * feePercentage;
+            const netAmount = amount - fee;
+
+            loader.style.display = 'flex';
+            const userRef = doc(db, "users", crntUser.uid);
+            try {
+                await runTransaction(db, async (transaction) => {
+                    const userSnap = await transaction.get(userRef);
+                    if (!userSnap.exists()) throw "User not found!";
+                    const currentBalance = userSnap.data().balance;
+                    if (currentBalance < amount) throw "Insufficient balance.";
+                    
+                    transaction.update(userRef, { balance: currentBalance - amount });
+                    const wdRef = doc(collection(db, "withdrawals"));
+                    transaction.set(wdRef, { 
+                        userId: crntUser.uid, 
+                        userName: usrData.name, 
+                        requestedAmount: amount,
+                        fee: fee,
+                        netAmount: netAmount,
+                        method: method, 
+                        account: account, 
+                        status: "pending", 
+                        requestedAt: serverTimestamp() 
+                    });
+                });
+
+                usrData.balance -= amount; 
+                updUI();
+                showAlert(`আপনার উইথড্রয়াল রিকোয়েস্ট সফলভাবে জমা হয়েছে।`);
+                document.getElementById('withdraw-amount').value = ''; 
+                document.getElementById('withdraw-method').value = ''; 
+                document.getElementById('withdraw-account').value = '';
+                calculateAndDisplayFee(); // Reset the display and button
+                ldWdHist();
+            } catch (error) { 
+                console.error("Error hndlWdReq:", error); 
+                showAlert(typeof error === 'string' ? error : "রিকোয়েস্ট জমা দিতে সমস্যা হয়েছে।"); 
+            } finally { 
+                loader.style.display = 'none'; 
+            }
+        }
+
+        async function ldWdHist() {
+            const histList = document.getElementById('withdrawal-history-list');
+            histList.innerHTML = '<p class="text-gray-400 text-center">ইতিহাস লোড হচ্ছে...</p>';
+            try {
+                const q = query(collection(db, "withdrawals"), where("userId", "==", crntUser.uid), orderBy("requestedAt", "desc"));
+                const snapshot = await getDocs(q);
+                if (snapshot.empty) { histList.innerHTML = '<p class="text-gray-400 text-center">এখনও কোনো উইথড্র করেননি।</p>'; return; }
+                histList.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const item = doc.data();
+                    let statusColor = item.status === 'approved' ? 'text-green-400' : item.status === 'rejected' ? 'text-red-400' : 'text-yellow-400';
+                    const date = item.requestedAt ? item.requestedAt.toDate().toLocaleDateString('en-GB') : 'N/A';
+                    histList.innerHTML += `
+                        <div class="history-item">
+                            <div class="details">
+                                <p class="title">${item.method} - <span class="capitalize ${statusColor}">${item.status}</span></p>
+                                <p class="subtitle">${date} - ${item.account || 'N/A'}</p>
+                            </div>
+                            <p class="amount text-red-400">-৳${(item.requestedAmount || item.amount).toFixed(2)}</p>
+                        </div>`;
+                });
+            } catch (error) { console.error("Error ldWdHist:", error); histList.innerHTML = '<p class="text-red-400 text-center">ইতিহাস লোড করা যায়নি।</p>'; }
+        }
+        window.ldWdHist = ldWdHist;
+
+        function getTaskIcon(task) {
+            if (task.appLogoUrl) {
+                return { type: 'image', src: task.appLogoUrl, color: '' };
+            }
+            const lowerTitle = task.title.toLowerCase();
+            if (lowerTitle.includes('youtube')) return { type: 'icon', icon: 'youtube', color: 'text-red-500' };
+            if (lowerTitle.includes('tiktok')) return { type: 'icon', icon: 'music', color: 'text-white' };
+            if (lowerTitle.includes('facebook')) return { type: 'icon', icon: 'facebook', color: 'text-blue-500' };
+            if (lowerTitle.includes('instagram')) return { type: 'icon', icon: 'instagram', color: 'text-pink-500' };
+            if (lowerTitle.includes('telegram')) return { type: 'icon', icon: 'send', color: 'text-sky-400' };
+            if (lowerTitle.includes('app') || lowerTitle.includes('download')) return { type: 'icon', icon: 'download', color: 'text-green-400' };
+            return { type: 'icon', icon: 'list-checks', color: 'text-gray-300' };
+        }
+
+        async function ldTasks() {
+            const taskList = document.getElementById("task-list");
+            taskList.innerHTML = '<p class="text-gray-400 text-center">Loading tasks...</p>';
+            try {
+                const subQ = query(collection(db, "taskSubmissions"), where("userId", "==", crntUser.uid));
+                const tasksQ = query(collection(db, "tasks"), orderBy("createdAt", "desc"));
+                const [subSnap, tasksSnap] = await Promise.all([getDocs(subQ), getDocs(tasksQ)]);
+                const usrSubs = {}; subSnap.forEach(doc => usrSubs[doc.data().taskId] = doc.data());
+                
+                if (tasksSnap.empty) { taskList.innerHTML = '<p class="text-gray-400 text-center">New tasks coming soon.</p>'; return; }
+                
+                taskList.innerHTML = '';
+                for (const docSnap of tasksSnap.docs) { // Using for...of for async operations
+                    const task = { id: docSnap.id, ...docSnap.data() };
+                    const submission = usrSubs[task.id];
+                    const taskDiv = document.createElement("div");
+                    taskDiv.className = "card-bg p-4 rounded-xl space-y-3";
+                    
+                    const { icon, color } = getTaskIcon(task);
+
+                    // Fetch total completion count for this task
+                    const completionsQuery = query(collection(db, "taskSubmissions"), where("taskId", "==", task.id), where("status", "==", "approved"));
+                    const completionsSnap = await getDocs(completionsQuery);
+                    const completionCount = completionsSnap.size;
+                    const displayCount = 53 + completionCount;
+
+                    let headerHTML = `
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="bg-gray-800/50 p-3 rounded-full flex items-center justify-center">
+                                    <i data-lucide="${icon}" class="w-8 h-8 ${color}"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold">${task.title}</h3>
+                                    <p class="text-sm text-gray-400">Reward: <span class="font-semibold text-[#D4AF37]">৳${task.reward || 0}</span></p>
+                                </div>
+                            </div>
+                             <div class="text-right">
+                                <button class="btn-outline-accent px-3 py-1 rounded-full text-sm" onclick="toggleVideoTaskDetails('${task.id}')">Details</button>
+                                <div class="mt-2">
+                                     <span class="bg-green-500/20 text-green-400 text-xs font-bold px-3 py-1 rounded-full">TOTAL ✅ ${displayCount}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    // The description is now pulled from task.description
+                    let contentHTML = `<div id="task-details-${task.id}" class="hidden mt-2 p-3 bg-gray-900/50 rounded-lg">
+                        <p class="text-sm text-gray-300 whitespace-pre-wrap">${task.description || 'Watch the video and find the code.'}</p>
+                    </div>`;
+
+                    if (submission) {
+                        const statusColor = submission.status === 'approved' ? 'bg-green-500/20 text-green-400' : submission.status === 'rejected' ? 'bg-red-500/20 text-red-400' : 'bg-yellow-500/20 text-yellow-400';
+                        contentHTML += `<div class="text-center p-2 rounded-lg ${statusColor} flex items-center justify-center gap-2 mt-3"><i data-lucide="${submission.status === 'approved' ? 'check-circle' : 'loader'}" class="w-5 h-5"></i><p class="font-bold capitalize">${submission.status}</p></div>`;
+                    } else {
+                        contentHTML += `<div id="task-interactive-area-${task.id}" class="mt-3">
+                            <div id="task-timer-area-${task.id}" class="hidden text-center text-gray-300 font-semibold p-2"></div>
+                            <div id="task-input-area-${task.id}" class="hidden space-y-2">
+                                <input type="text" id="code-${task.id}" placeholder="Enter video code here" class="w-full p-2 rounded-lg input-field"/>
+                                <button class="w-full p-2 rounded-lg btn-outline-accent" onclick="subTask('${task.id}', '${task.code}', ${task.reward})">Submit Code</button>
+                            </div>
+                            <button id="start-btn-${task.id}" class="w-full p-2 rounded-lg btn-gradient" onclick="startTaskTimer('${task.id}', ${task.duration || 100}, '${task.videoUrl}')">Start Task</button>
+                        </div>`;
+                    }
+                    
+                    taskDiv.innerHTML = headerHTML + contentHTML;
+                    taskList.appendChild(taskDiv);
+                };
+                lucide.createIcons();
+            } catch (error) { console.error("Error ldTasks: ", error); taskList.innerHTML = '<p class="text-red-400 text-center">Failed to load tasks.</p>'; }
+        }
+        window.ldTasks = ldTasks;
+        
+        window.toggleVideoTaskDetails = function(taskId) {
+            document.getElementById(`task-details-${taskId}`).classList.toggle('hidden');
+        }
+
+        async function ldAppTasks() {
+            const appTaskList = document.getElementById("app-download-list");
+            appTaskList.innerHTML = '<p class="text-gray-400 text-center">Loading premium tasks...</p>';
+            
+            try {
+                // Fetch user's previous submissions first
+                const subQ = query(collection(db, "appTaskSubmissions"), where("userId", "==", crntUser.uid));
+                const subSnap = await getDocs(subQ);
+                const usrAppSubs = {};
+                subSnap.forEach(doc => {
+                    const subData = doc.data();
+                    if (!usrAppSubs[subData.appTaskId] || usrAppSubs[subData.appTaskId].submittedAt < subData.submittedAt) {
+                        usrAppSubs[subData.appTaskId] = subData;
+                    }
+                });
+
+                const appTasksQ = query(collection(db, "appTasks"), orderBy("createdAt", "desc"));
+                const appTasksSnap = await getDocs(appTasksQ);
+
+                if (appTasksSnap.empty) {
+                     appTaskList.innerHTML = '<p class="text-gray-400 text-center">New app download tasks coming soon!</p>'; 
+                     return; 
+                }
+                
+                appTaskList.innerHTML = ''; 
+
+                for (const docSnap of appTasksSnap.docs) { // Using for...of for async operations
+                    const appTask = { id: docSnap.id, ...docSnap.data() };
+                    const submission = usrAppSubs[appTask.id];
+                    const appTaskDiv = document.createElement("div");
+                    appTaskDiv.className = "app-task-card";
+                    
+                    let statusHTML = '';
+                    if(submission) {
+                        if (submission.status === 'approved') {
+                            statusHTML = `<div class="status-badge status-approved"><i data-lucide="check-circle-2" class="w-4 h-4"></i>Approved</div>`;
+                        } else if (submission.status === 'pending') {
+                            statusHTML = `<div class="status-badge status-pending"><i data-lucide="loader" class="w-4 h-4 animate-spin"></i>Pending</div>`;
+                        } else if (submission.status === 'rejected') {
+                            const cooldownEnds = submission.rejectedAt ? new Timestamp(submission.rejectedAt.seconds + 10 * 3600, submission.rejectedAt.nanoseconds) : null;
+                            if (cooldownEnds && Timestamp.now() < cooldownEnds) {
+                                 statusHTML = `<div class="status-badge status-rejected" id="cooldown-${appTask.id}"><i data-lucide="timer" class="w-4 h-4"></i></div>`;
+                                 setTimeout(() => startCooldownTimer(appTask.id, cooldownEnds.toMillis()), 0);
+                            } else {
+                                statusHTML = `<button class="btn-outline-accent px-4 py-2 rounded-lg text-sm" onclick="toggleAppTaskDetails('${appTask.id}')">Retry Task</button>`;
+                            }
+                        }
+                    } else {
+                        statusHTML = `<button class="btn-outline-accent px-4 py-2 rounded-lg text-sm" onclick="toggleAppTaskDetails('${appTask.id}')">View Task</button>`;
+                    }
+
+                    // Fetch total completion count for this app task
+                    const completionsQuery = query(collection(db, "appTaskSubmissions"), where("appTaskId", "==", appTask.id), where("status", "==", "approved"));
+                    const completionsSnap = await getDocs(completionsQuery);
+                    const completionCount = completionsSnap.size;
+                    const displayCount = 53 + completionCount;
+
+                    appTaskDiv.innerHTML = `
+                        <div class="app-task-header">
+                            <div class="app-task-info">
+                                <img src="${appTask.appLogoUrl || 'https://via.placeholder.com/40'}" alt="${appTask.title} logo">
+                                <div>
+                                    <h3 class="app-task-title">${appTask.title}</h3>
+                                    <p class="app-task-reward">Reward: ৳${appTask.reward || 0}</p>
+                                </div>
+                            </div>
+                            <div class="app-task-action text-right">
+                               ${statusHTML}
+                               <div class="mt-2">
+                                    <span class="bg-green-500/20 text-green-400 text-xs font-bold px-3 py-1 rounded-full">TOTAL ✅ ${displayCount}</span>
+                               </div>
+                            </div>
+                        </div>
+                        <div id="app-task-details-${appTask.id}" class="hidden app-task-details-content">
+                            <p class="mb-3 whitespace-pre-wrap">${appTask.description || 'No details available.'}</p>
+                            <div class="space-y-3">
+                                <input type="text" id="app-code-${appTask.id}" placeholder="Proof (e.g., your account number)" class="w-full p-2 rounded-lg input-field"/>
+                                <a href="${appTask.downloadUrl}" target="_blank" class="w-full block text-center p-2 rounded-lg btn-gradient">
+                                    Start Task
+                                </a>
+                                <button class="w-full p-2 rounded-lg btn-outline-accent" onclick="submitAppTask('${appTask.id}', ${appTask.reward})">Submit Proof</button>
+                            </div>
+                        </div>
+                    `;
+                    appTaskList.appendChild(appTaskDiv);
+                };
+
+                lucide.createIcons();
+            } catch (error) {
+                console.error("Error loading app tasks:", error);
+                appTaskList.innerHTML = '<p class="text-red-400 text-center">Failed to load app tasks.</p>';
+            }
+        }
+        window.ldAppTasks = ldAppTasks;
+
+        function startCooldownTimer(appTaskId, endTime) {
+            const cooldownEl = document.getElementById(`cooldown-${appTaskId}`);
+            if (!cooldownEl) return;
+
+            const interval = setInterval(() => {
+                const now = Date.now();
+                const distance = endTime - now;
+
+                if (distance < 0) {
+                    clearInterval(interval);
+                    ldAppTasks();
+                    return;
+                }
+                const hours = Math.floor(distance / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                cooldownEl.innerHTML = `<i data-lucide="timer" class="w-4 h-4"></i> ${hours}h ${minutes}m ${seconds}s`;
+                lucide.createIcons();
+            }, 1000);
+        }
+
+        window.toggleAppTaskDetails = function(appTaskId) {
+            document.getElementById(`app-task-details-${appTaskId}`).classList.toggle('hidden');
+        };
+
+        window.submitAppTask = async function(appTaskId, reward) {
+            const proof = document.getElementById(`app-code-${appTaskId}`).value.trim();
+            if (!proof) return showAlert("❌ Please enter proof of completion.");
+            loader.style.display = 'flex';
+            try {
+                await addDoc(collection(db, "appTaskSubmissions"), { 
+                    userId: crntUser.uid, 
+                    userName: usrData.name, 
+                    appTaskId: appTaskId, 
+                    reward: parseFloat(reward), 
+                    proof: proof, 
+                    status: "pending", 
+                    submittedAt: serverTimestamp() 
+                });
+                showAlert("✅ App task submitted for review."); 
+                ldAppTasks();
+            } catch (error) { 
+                console.error("Error submitAppTask:", error); 
+                showAlert("Submission failed."); 
+            } finally { 
+                loader.style.display = 'none'; 
+            }
+        }
+
+        window.subTask = async function(taskId, correctCode, reward) {
+            const inputCode = document.getElementById(`code-${taskId}`).value.trim();
+            if (!inputCode) return showAlert("❌ Please enter the code.");
+            if (inputCode.toUpperCase() !== correctCode.toUpperCase()) return showAlert("❌ Incorrect code!");
+            loader.style.display = 'flex';
+            try {
+                await addDoc(collection(db, "taskSubmissions"), { userId: crntUser.uid, userName: usrData.name, taskId: taskId, reward: parseFloat(reward), submittedCode: inputCode, status: "pending", submittedAt: serverTimestamp() });
+                showAlert("✅ Task submitted for review."); ldTasks();
+            } catch (error) { console.error("Error subTask:", error); showAlert("Submission failed."); } finally { loader.style.display = 'none'; }
+        }
+
+        window.startTaskTimer = function(taskId, duration, videoUrl) {
+            if (videoUrl && videoUrl !== 'undefined') window.open(videoUrl, '_blank');
+            const startBtn = document.getElementById(`start-btn-${taskId}`);
+            const timerArea = document.getElementById(`task-timer-area-${taskId}`);
+            const inputArea = document.getElementById(`task-input-area-${taskId}`);
+            
+            startBtn.classList.add('hidden');
+            timerArea.classList.remove('hidden');
+            
+            let timeLeft = duration;
+            timerArea.innerHTML = `<div class="flex items-center justify-center gap-2"><i data-lucide="timer" class="w-5 h-5 animate-spin"></i><span>Please wait ${timeLeft} seconds...</span></div>`;
+            lucide.createIcons();
+            
+            const timerInt = setInterval(() => {
+                timeLeft--;
+                timerArea.querySelector('span').textContent = `Please wait ${timeLeft} seconds...`;
+                if (timeLeft <= 0) { 
+                    clearInterval(timerInt); 
+                    timerArea.classList.add('hidden');
+                    inputArea.classList.remove('hidden');
+                }
+            }, 1000);
+        }
+        
+        async function handleRedeemCode(code) {
+            if (!code || code.trim() === '') {
+                return showAlert("Please enter a redeem code.");
+            }
+            const enteredCode = code.trim().toUpperCase();
+            loader.style.display = 'flex';
+            try {
+                const codesRef = collection(db, "redeemCodes");
+                const q = query(codesRef, where("code", "==", enteredCode), where("isUsed", "==", false), limit(1));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) throw new Error("Invalid or already used redeem code.");
+                
+                const codeDoc = querySnapshot.docs[0];
+                const codeData = codeDoc.data();
+                const codeRef = codeDoc.ref;
+                const userRef = doc(db, "users", crntUser.uid);
+
+                await runTransaction(db, async (transaction) => {
+                    const freshCodeDoc = await transaction.get(codeRef);
+                    if (!freshCodeDoc.exists() || freshCodeDoc.data().isUsed) {
+                        throw new Error("This code has just been used by someone else.");
+                    }
+                    transaction.update(codeRef, { isUsed: true, usedBy: crntUser.uid, usedAt: serverTimestamp() });
+                    transaction.update(userRef, { balance: increment(codeData.amount) });
+                });
+
+                await fchUsrDt();
+                updUI();
+                showAlert(`✅ Success! ৳${codeData.amount.toFixed(2)} has been added to your balance.`);
+                if(document.getElementById('redeem-code-input-page')) {
+                    document.getElementById('redeem-code-input-page').value = '';
+                }
+            } catch (error) {
+                console.error("Error redeeming code:", error);
+                showAlert(`❌ Error: ${error.message}`);
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+        
+        function showAlert(message) {
+            document.getElementById('alert-message').textContent = message;
+            document.getElementById('custom-alert').classList.remove('hidden');
+            document.getElementById('alert-ok-btn').onclick = () => { document.getElementById('custom-alert').classList.add('hidden'); };
+        }
+
+        window.copyToClipboard = function(text, message = 'Copied to clipboard!') {
+            navigator.clipboard.writeText(text.trim()).then(() => showAlert(message));
+        }
+
+    </script>
+</body>
+</html>
